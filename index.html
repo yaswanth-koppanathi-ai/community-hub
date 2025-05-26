@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Resource Hub</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4e54c8;
+            --secondary: #8f94fb;
+            --success: #28a745;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem;
+        }
+        
+        .card-img-top {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            height: 160px;
+            object-fit: cover;
+        }
+        
+        .badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 30px;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-right: 1rem;
+            color: white;
+        }
+        
+        .search-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .resource-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+        }
+        
+        .btn-outline-primary:hover {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        footer {
+            background-color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        /* Tabs styling */
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+        }
+        
+        /* Sidebar styles */
+        .sidebar {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .sidebar h5 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-option {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Form styling */
+        .form-control {
+            border-radius: 8px;
+        }
+        
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 18px;
+            height: 18px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        /* Star Rating */
+        .star-rating .fa-star {
+            color: #ffc107;
+        }
+        
+        .star-rating .fa-star.empty {
+            color: #e4e5e9;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade {
+            animation: fadeIn 0.5s;
+        }
+        
+        /* Resource type specific colors */
+        .bg-course { background-color: #4e54c8; }
+        .bg-hackathon { background-color: #9C27B0; }
+        .bg-internship { background-color: #2196F3; }
+        .bg-educational { background-color: #4CAF50; }
+        .bg-event { background-color: #FF9800; }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+                padding: 2rem 0;
+            }
+            
+            .search-container {
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube me-2"></i>Community Resource Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#courses">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#hackathons">Hackathons</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#internships">Internships</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#resources">Free Resources</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="position-relative me-3">
+                        <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#notificationsModal">
+                            <i class="fas fa-bell fs-5"></i>
+                            <span class="notification-badge">1</span>
+                        </a>
+                    </div>
+                    <button class="btn btn-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                    <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                        <i class="fas fa-plus me-1"></i> Add Resource
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <h1 class="display-4 fw-bold mb-3">Find and Share Community Resources</h1>
+                    <p class="lead mb-4">Discover trending courses, hackathons, internships, and free educational resources all in one place.</p>
+                    <button class="btn btn-light btn-lg me-2" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                        <i class="fas fa-share-alt me-2"></i>Share a Resource
+                    </button>
+                    <button class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </button>
+                </div>
+                <div class="col-lg-5">
+                    <img src="/api/placeholder/600/400" alt="Community resources illustration" class="img-fluid rounded shadow">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-container">
+            <form id="searchForm">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" placeholder="Search resources...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>All Categories</option>
+                            <option>Courses</option>
+                            <option>Hackathons</option>
+                            <option>Internships</option>
+                            <option>Free Resources</option>
+                            <option>Events</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select">
+                            <option selecte>All Locations</option>
+                            <option>Online</option>
+                            <option>Local</option>
+                            <option>Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Categories Quick Access -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <a href="#courses" class="text-decoration-none mb-2">
+                        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm">
+                            <div class="category-icon bg-course">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Trending Courses</h6>
+                                <small class="text-muted">Waiting....</small>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#hackathons" class="text-decoration-none mb-2">
+                        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm">
+                            <div class="category-icon bg-hackathon">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Hackathons</h6>
+                                <small class="text-muted">Waiting...</small>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#internships" class="text-decoration-none mb-2">
+                        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm">
+                            <div class="category-icon bg-internship">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Internships</h6>
+                                <small class="text-muted">Waiting....</small>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#resources" class="text-decoration-none mb-2">
+                        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm">
+                            <div class="category-icon bg-educational">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Free Resources</h6>
+                                <small class="text-muted">Waiting....</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="sidebar">
+                    <h5>Filter Resources</h5>
+                    
+                    <div class="mb-4">
+                        <h6>Resource Type</h6>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="coursesCheck" check>
+                            <label class="form-check-label" for="coursesCheck">Courses</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="hackathonsCheck" check>
+                            <label class="form-check-label" for="hackathonsCheck">Hackathons</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="internshipsCheck" check>
+                            <label class="form-check-label" for="internshipsCheck">Internships</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="resourcesCheck" check>
+                            <label class="form-check-label" for="resourcesCheck">Free Resources</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="eventsCheck" check>
+                            <label class="form-check-label" for="eventsCheck">Events</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Location</h6>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="onlineCheck" check>
+                            <label class="form-check-label" for="onlineCheck">Online</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="localCheck" check>
+                            <label class="form-check-label" for="localCheck">Local</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="hybridCheck" check>
+                            <label class="form-check-label" for="hybridCheck">Hybrid</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Price</h6>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="freeCheck" check>
+                            <label class="form-check-label" for="freeCheck">Free</label>
+                        </div>
+                        <div class="form-check filter-option">
+                            <input class="form-check-input" type="checkbox" id="paidCheck" check>
+                            <label class="form-check-label" for="paidCheck">Paid</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Date</h6>
+                        <div class="mb-2">
+                            <label class="form-label small">From</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div>
+                            <label class="form-label small">To</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                    <button class="btn btn-outline-secondary w-100 mt-2">Reset</button>
+                </div>
+                
+                <div class="sidebar mt-4">
+                    <h5>Trending Tags</h5>
+                    <div class="d-flex flex-wrap">
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#MachineLearning</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#WebDev</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#Python</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#JavaScript</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#ArtificialIntelligence</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#DataScience</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#RemoteWork</a>
+                        <a href="#" class="badge bg-light text-dark mb-2 me-2">#IoT</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Featured Resources -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3>Featured Resources</h3>
+                        <a href="#" class="text-decoration-none">View all</a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="position-relative">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Featured course">
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-primary">Featured</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-course">Course</span>
+                                        <!--
+                                        <div class="star-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                            <span class="ms-1"></span>
+                                        </div>
+                                    -->
+                                    </div>
+                                    <h5 class="card-title">Machine Learning Fundamentals</h5>
+                                    <p class="card-text">Learn the core concepts of machine learning with practical examples using Python and TensorFlow.</p>
+                                    <div class="resource-meta d-flex flex-wrap justify-content-between">
+                                        <span><i class="fas fa-user-tie me-1"></i> Stanford University</span>
+                                        <span><i class="fas fa-globe me-1"></i> Online</span>
+                                    </div>
+                                    <div class="resource-meta d-flex flex-wrap justify-content-between mt-2">
+                                        <span><i class="fas fa-calendar me-1"></i> Starts June 15</span>
+                                        <span><i class="fas fa-tag me-1"></i> Free</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="position-relative">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Featured hackathon">
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-primary">Featured</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-hackathon">Hackathon</span>
+                                        <!--
+                                        <div class="star-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <span class="ms-1">5.0</span>
+                                        </div>
+                                    -->
+                                    </div>
+                                    <h5 class="card-title">Global Innovation Challenge 2025</h5>
+                                    <p class="card-text">Join teams from around the world to solve real-world problems with tech solutions.</p>
+                                    <div class="resource-meta d-flex flex-wrap justify-content-between">
+                                        <span><i class="fas fa-map-marker-alt me-1"></i> Hybrid (Online & New York)</span>
+                                        <span><i class="fas fa-users me-1"></i> Teams of 2-5</span>
+                                    </div>
+                                    <div class="resource-meta d-flex flex-wrap justify-content-between mt-2">
+                                        <span><i class="fas fa-calendar me-1"></i> July 10-12, 2025</span>
+                                        <span><i class="fas fa-trophy me-1"></i> $50,000 Prize</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resource Tabs -->
+                <ul class="nav nav-tabs mb-4" id="resourceTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-resources" type="button" role="tab">All Resources</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button" role="tab">Courses</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="hackathons-tab" data-bs-toggle="tab" data-bs-target="#hackathons" type="button" role="tab">Hackathons</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="internships-tab" data-bs-toggle="tab" data-bs-target="#internships" type="button" role="tab">Internships</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab">Free Resources</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="resourceTabsContent">
+                    <!-- All Resources Tab -->
+                    <div class="tab-pane fade show active" id="all-resources" role="tabpanel">
+                        <div class="row">
+                            <!-- Course Card -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-course">Course</span>
+                                            <!--
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star empty"></i>
+                                                <span class="ms-1">4.0</span>
+                                            </div>
+                                        -->
+                                        </div>
+                                        <h5 class="card-title">Software Developer Intern</h5>
+                                        <p class="card-text">Join our innovative team for a 12-week paid internship opportunity to work on real-world projects.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-building me-1"></i> TechCorp Solutions</div>
+                                            <div><i class="fas fa-dollar-sign me-1"></i> Paid</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Apply Now</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Free Resource Card -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Resource thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-educational">Free Resource</span>
+                                            <!--
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                                <span class="ms-1">4.5</span>
+                                            </div>
+                                        -->
+                                        </div>
+                                        <h5 class="card-title">Ultimate Python Cheat Sheet</h5>
+                                        <p class="card-text">Comprehensive Python reference guide with examples for beginners and advanced programmers.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user me-1"></i> Contributed by CodeMaster</div>
+                                            <div><i class="fas fa-download me-1"></i> 1,246 downloads</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Event Card -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Event thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-event">Event</span>
+                                            <span class="badge bg-warning text-dark">Next Week</span>
+                                        </div>
+                                        <h5 class="card-title">Tech Career Fair 2025</h5>
+                                        <p class="card-text">Connect with top tech companies and discover career opportunities at this annual job fair.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-calendar me-1"></i> May 15, 2025</div>
+                                            <div><i class="fas fa-map-marker-alt me-1"></i> Convention Center</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Register</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Course Card 2 
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-course">Course</span>
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <span class="ms-1">5.0</span>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title">Data Science Essentials</h5>
+                                        <p class="card-text">Master data analysis, visualization, and machine learning with Python and R.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user-tie me-1"></i> DataCamp</div>
+                                            <div><i class="fas fa-tag me-1"></i> $29.99/month</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        -->
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <!-- Courses Tab -->
+                    <div class="tab-pane fade" id="courses" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Trending Courses</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="coursesSortDropdown" data-bs-toggle="dropdown">
+                                    Sort By
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="coursesSortDropdown">
+                                    <li><a class="dropdown-item" href="#">Most Popular</a></li>
+                                    <li><a class="dropdown-item" href="#">Newest First</a></li>
+                                    <li><a class="dropdown-item" href="#">Highest Rated</a></li>
+                                    <li><a class="dropdown-item" href="#">Free First</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Course Cards will be dynamically loaded here -->
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-course">Course</span>
+                                            <!--
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star empty"></i>
+                                                <span class="ms-1">4.0</span>
+                                            </div>
+                                        -->
+                                        </div>
+                                        <h5 class="card-title">Web Development Bootcamp</h5>
+                                        <p class="card-text">Complete full-stack web development course with HTML, CSS, JavaScript, Node.js and MongoDB.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user-tie me-1"></i> Udemy</div>
+                                            <div><i class="fas fa-tag me-1"></i> $59.99</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-course">Course</span>
+                                            <!--
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <span class="ms-1">5.0</span>
+                                            </div>
+                                        -->
+                                        </div>
+                                        <h5 class="card-title">Data Science Essentials</h5>
+                                        <p class="card-text">Master data analysis, visualization, and machine learning with Python and R.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user-tie me-1"></i> DataCamp</div>
+                                            <div><i class="fas fa-tag me-1"></i> $29.99/month</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-course">Course</span>
+                                            <span class="badge bg-success">Free</span>
+                                        </div>
+                                        <h5 class="card-title">Introduction to Cybersecurity</h5>
+                                        <p class="card-text">Learn the fundamentals of cybersecurity including threat detection and protection strategies.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user-tie me-1"></i> edX</div>
+                                            <div><i class="fas fa-tag me-1"></i> Free (Certificate: $49)</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Enroll Now</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hackathons Tab -->
+                    <div class="tab-pane fade" id="hackathons" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Upcoming Hackathons</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="hackathonsSortDropdown" data-bs-toggle="dropdown">
+                                    Sort By
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="hackathonsSortDropdown">
+                                    <li><a class="dropdown-item" href="#">Date (Soonest)</a></li>
+                                    <li><a class="dropdown-item" href="#">Prize Value</a></li>
+                                    <li><a class="dropdown-item" href="#">Location</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Hackathon Cards -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Hackathon thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-hackathon">Hackathon</span>
+                                            <span class="badge bg-danger">Registration Closing Soon</span>
+                                        </div>
+                                        <h5 class="card-title">HealthTech Hackathon</h5>
+                                        <p class="card-text">Build innovative solutions for healthcare challenges in this 36-hour coding marathon.</p>
+                                        <div class="resource-meta mb-2">
+                                            <div><i class="fas fa-calendar me-1"></i> May 20-22, 2025</div>
+                                            <div><i class="fas fa-map-marker-alt me-1"></i> Boston, MA</div>
+                                            <div><i class="fas fa-users me-1"></i> Teams of 3-5</div>
+                                            <div><i class="fas fa-trophy me-1"></i> $25,000 Prize Pool</div>
+                                        </div>
+                                        <div class="d-flex flex-wrap">
+                                            <span class="badge bg-light text-dark mb-1 me-1">#Healthcare</span>
+                                            <span class="badge bg-light text-dark mb-1 me-1">#AI</span>
+                                            <span class="badge bg-light text-dark mb-1 me-1">#MedTech</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Register Now</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Hackathon thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-hackathon">Hackathon</span>
+                                            <span class="badge bg-primary">Featured</span>
+                                        </div>
+                                        <h5 class="card-title">Global Innovation Challenge 2025</h5>
+                                        <p class="card-text">Join teams from around the world to solve real-world problems with tech solutions.</p>
+                                        <div class="resource-meta mb-2">
+                                            <div><i class="fas fa-calendar me-1"></i> July 10-12, 2025</div>
+                                            <div><i class="fas fa-map-marker-alt me-1"></i> Hybrid (Online & New York)</div>
+                                            <div><i class="fas fa-users me-1"></i> Teams of 2-5</div>
+                                            <div><i class="fas fa-trophy me-1"></i> $50,000 Prize Pool</div>
+                                        </div>
+                                        <div class="d-flex flex-wrap">
+                                            <span class="badge bg-light text-dark mb-1 me-1">#Innovation</span>
+                                            <span class="badge bg-light text-dark mb-1 me-1">#Global</span>
+                                            <span class="badge bg-light text-dark mb-1 me-1">#SocialImpact</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Internships Tab -->
+                    <div class="tab-pane fade" id="internships" role="tabpanel">
+                        <!-- Internship content will be loaded here -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Available Internships</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="internshipsSortDropdown" data-bs-toggle="dropdown">
+                                    Sort By
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="internshipsSortDropdown">
+                                    <li><a class="dropdown-item" href="#">Most Recent</a></li>
+                                    <li><a class="dropdown-item" href="#">Company</a></li>
+                                    <li><a class="dropdown-item" href="#">Location</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Internship listings -->
+                            <div class="col-12 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <span class="badge bg-internship me-2">Internship</span>
+                                                <span class="badge bg-success">New</span>
+                                            </div>
+                                            <small class="text-muted">Posted 2 days ago</small>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h5 class="card-title">Software Developer Intern</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">TechCorp Solutions</h6>
+                                                <p class="card-text">Join our innovative team for a 12-week paid internship opportunity to work on real-world projects.</p>
+                                                <div class="d-flex flex-wrap">
+                                                    <span class="badge bg-light text-dark mb-1 me-1">Java</span>
+                                                    <span class="badge bg-light text-dark mb-1 me-1">Spring Boot</span>
+                                                    <span class="badge bg-light text-dark mb-1 me-1">React</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-3 mt-md-0">
+                                                <div class="resource-meta">
+                                                    <div><i class="fas fa-map-marker-alt me-1"></i> San Francisco, CA</div>
+                                                    <div><i class="fas fa-calendar me-1"></i> Summer 2025</div>
+                                                    <div><i class="fas fa-dollar-sign me-1"></i> $25-30/hour</div>
+                                                    <div><i class="fas fa-clock me-1"></i> Full-time</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white">
+                                        <button class="btn btn-primary">Apply Now</button>
+                                        <button class="btn btn-outline-primary ms-2">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <span class="badge bg-internship me-2">Internship</span>
+                                                <span class="badge bg-warning text-dark">Remote</span>
+                                            </div>
+                                            <small class="text-muted">Posted 1 week ago</small>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h5 class="card-title">Data Science Intern</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">Analytics Innovations</h6>
+                                                <p class="card-text">Work with our data science team on machine learning projects and help transform raw data into meaningful insights.</p>
+                                                <div class="d-flex flex-wrap">
+                                                    <span class="badge bg-light text-dark mb-1 me-1">Python</span>
+                                                    <span class="badge bg-light text-dark mb-1 me-1">Machine Learning</span>
+                                                    <span class="badge bg-light text-dark mb-1 me-1">SQL</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-3 mt-md-0">
+                                                <div class="resource-meta">
+                                                    <div><i class="fas fa-map-marker-alt me-1"></i> Remote</div>
+                                                    <div><i class="fas fa-calendar me-1"></i> Fall 2025</div>
+                                                    <div><i class="fas fa-dollar-sign me-1"></i> Paid</div>
+                                                    <div><i class="fas fa-clock me-1"></i> Part-time</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white">
+                                        <button class="btn btn-primary">Apply Now</button>
+                                        <button class="btn btn-outline-primary ms-2">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Free Resources Tab -->
+                    <div class="tab-pane fade" id="resources" role="tabpanel">
+                        <!-- Free resources content will be loaded here -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Free Educational Resources</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="resourcesSortDropdown" data-bs-toggle="dropdown">
+                                    Sort By
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="resourcesSortDropdown">
+                                    <li><a class="dropdown-item" href="#">Most Downloaded</a></li>
+                                    <li><a class="dropdown-item" href="#">Newest First</a></li>
+                                    <li><a class="dropdown-item" href="#">Highest Rated</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Free resource cards -->
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Resource thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-educational">Free Resource</span>
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star-half-alt"></i>
+                                                <span class="ms-1">4.5</span>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title">Ultimate Python Cheat Sheet</h5>
+                                        <p class="card-text">Comprehensive Python reference guide with examples for beginners and advanced programmers.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user me-1"></i> Contributed by CodeMaster</div>
+                                            <div><i class="fas fa-download me-1"></i> 1,246 downloads</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Resource thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-educational">Free Resource</span>
+                                            <div class="star-rating">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <span class="ms-1">5.0</span>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title">Front-End Development E-Book</h5>
+                                        <p class="card-text">A complete guide to modern front-end development with HTML5, CSS3, and JavaScript frameworks.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user me-1"></i> WebDev Academy</div>
+                                            <div><i class="fas fa-download me-1"></i> 872 downloads</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Resource thumbnail">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-educational">Free Resource</span>
+                                            <span class="badge bg-success">New</span>
+                                        </div>
+                                        <h5 class="card-title">AI Research Papers Collection</h5>
+                                        <p class="card-text">Curated collection of important AI research papers with summaries and explanations.</p>
+                                        <div class="resource-meta">
+                                            <div><i class="fas fa-user me-1"></i> AI Research Group</div>
+                                            <div><i class="fas fa-download me-1"></i> 327 downloads</div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-white border-top-0">
+                                        <button class="btn btn-primary w-100">Access Resource</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Newsletter Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2>Stay Updated with New Resources</h2>
+                    <p class="lead mb-4">Subscribe to our newsletter to receive weekly updates on new courses, hackathons, internships, and more!</p>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <form class="d-flex">
+                                <input type="email" class="form-control me-2" placeholder="Your email address">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-3"><i class="fas fa-cube me-2"></i>Community Resource Hub</h5>
+                    <p>A centralized platform where community members can find, share, and coordinate local resources for learning and professional development.</p>
+                    <div class="d-flex">
+                        <a href="#" class="me-3 text-dark"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="me-3 text-dark"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-3 text-dark"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="me-3 text-dark"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 My Website. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Designed by Yaswanth<a href="#" class="text-white">Your Name</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Add Resource Modal -->
+    <div class="modal fade" id="addResourceModal" tabindex="-1" aria-labelledby="addResourceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addResourceModalLabel">Share a Resource</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addResourceForm">
+                        <div class="mb-3">
+                            <label for="resourceTitle" class="form-label">Resource Title*</label>
+                            <input type="text" class="form-control" id="resourceTitle" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resourceType" class="form-label">Resource Type*</label>
+                            <select class="form-select" id="resourceType" required>
+                                <option value="" selected disabled>Select resource type</option>
+                                <option value="course">Course</option>
+                                <option value="hackathon">Hackathon</option>
+                                <option value="internship">Internship</option>
+                                <option value="educational">Free Educational Resource</option>
+                                <option value="event">Event</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourceProvider" class="form-label">Provider/Organization</label>
+                                    <input type="text" class="form-control" id="resourceProvider">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourceLocation" class="form-label">Location</label>
+                                    <select class="form-select" id="resourceLocation">
+                                        <option value="online">Online</option>
+                                        <option value="local">Local</option>
+                                        <option value="hybrid">Hybrid</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resourceDescription" class="form-label">Description*</label>
+                            <textarea class="form-control" id="resourceDescription" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourceStartDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="resourceStartDate">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourceEndDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="resourceEndDate">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourcePrice" class="form-label">Price</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="resourcePrice" min="0">
+                                        <div class="form-check form-switch ms-2 d-flex align-items-center">
+                                            <input class="form-check-input" type="checkbox" id="resourceIsFree">
+                                            <label class="form-check-label ms-2" for="resourceIsFree">Free</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resourceURL" class="form-label">Resource URL*</label>
+                                    <input type="url" class="form-control" id="resourceURL" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resourceTags" class="form-label">Tags (comma separated)</label>
+                            <input type="text" class="form-control" id="resourceTags" placeholder="e.g., Python, Machine Learning, Beginner">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resourceImage" class="form-label">Image (URL or upload)</label>
+                            <input type="file" class="form-control" id="resourceImage" accept="image/*">
+                            <div class="form-text">Or provide an image URL:</div>
+                            <input type="url" class="form-control mt-2" id="resourceImageURL" placeholder="https://example.com/image.jpg">
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                            <label class="form-check-label" for="termsCheck">
+                                I confirm this resource is accurate and follows community guidelines
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="addResourceForm" class="btn btn-primary">Submit Resource</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
